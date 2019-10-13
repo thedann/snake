@@ -1,0 +1,9 @@
+.player {
+  height: 1rem;
+  width: 1rem;
+  border-radius: 10px;
+  background-color: #528710;
+  position: absolute;
+  transition: all 0.33s;
+  z-index: 5;
+}
