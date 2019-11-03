@@ -3,7 +3,7 @@ import style from "./tail.module.css";
 import Position from "../../business/Position";
 
 export interface ITail {
-  parts: Position[];
+  parts?: Position[];
   // turningPoints?: Map<string, Direction>;
 }
 
@@ -15,7 +15,7 @@ const Tail: React.FC<ITail> = (props: ITail) => {
           return (
             <div
               style={{ left: part.xPosition, top: part.yPosition }}
-              className={style.player}
+              className={style.tail}
             ></div>
           );
         })}
