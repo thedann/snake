@@ -4,6 +4,6 @@
   border-radius: 10px;
   background-color: #528710;
   position: absolute;
-  transition: all 0.33s;
+  transition: all 0.15s;
   z-index: 5;
 }

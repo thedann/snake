@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useReducer, useRef, useEffect } from "react";
 import style from "./map.module.css";
 import Player from "../player/player";
 import Snack from "../snack/snack";
@@ -12,19 +12,20 @@ const Map: React.FC = () => {
   let controller = new Controller();
   let tailHelper = new TailHelper();
   let initialTail: ITail = {};
-  let initialDirectionPoints: Position[] = [];
 
+  //Hooks for PLAYER
   const [playerXPosition, setPlayerXPosition] = useState(80);
   const [playerYPosition, setPlayerYPosition] = useState(80);
   const [playerDirection, setPlayerDirection] = useState(Direction.None);
   const [playersTail, setPlayersTail] = useState(initialTail);
-  const [playersDirectionPoints, setPlayersDirectionPoints] = useState(
-    initialDirectionPoints
-  );
+  const [playerMoveTimer, setPlayerMoveTimer] = useState(320);
+  const [playerMaxSpeed, setPlayerMaxSpeed] = useState(70);
+  const [playerIsMoving, setPlayerIsMoving] = useState(0);
+  const [playerStartedGame, setPlayerStartedGame] = useState(false);
 
+  //Hooks for SNACK
   const [snackXPosition, setSnackXPosition] = useState(96);
   const [snackYPosition, setSnackYPosition] = useState(96);
-
   const [snackIsVisible, setSnackIsVisible] = useState(false);
 
   function giveRandomNumber() {
@@ -32,6 +33,40 @@ const Map: React.FC = () => {
     var number = 16 * times;
     return number;
   }
+
+  //Custom interval Hook
+  //from here: https://overreacted.io/making-setinterval-declarative-with-react-hooks/
+  function useInterval(callback: any, delay: number) {
+    const savedCallback = useRef<any>();
+
+    // Remember the latest callback.
+    useEffect(() => {
+      savedCallback.current = callback;
+    }, [callback]);
+
+    // Set up the interval.
+    useEffect(() => {
+      function tick() {
+        if (savedCallback && savedCallback.current != null) {
+          savedCallback.current();
+        }
+      }
+      if (delay !== null) {
+        let id = setInterval(tick, delay);
+        return () => clearInterval(id);
+      }
+    }, [delay]);
+  }
+
+  React.useEffect(() => {
+    let turn = playerIsMoving + 1;
+    setPlayerIsMoving(turn);
+  }, [playerStartedGame]);
+
+  useInterval(() => {
+    move(playerDirection);
+    setPlayerIsMoving(playerIsMoving + 1);
+  }, playerMoveTimer);
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
@@ -49,16 +84,18 @@ const Map: React.FC = () => {
       setSnackIsVisible(false);
       setSnackXPosition(giveRandomNumber());
       setSnackYPosition(giveRandomNumber());
+      if (playerMoveTimer >= playerMaxSpeed) {
+        setPlayerMoveTimer(playerMoveTimer * 0.8);
+      } else {
+        console.log("reached max speed");
+      }
 
       let currentPosition: Position = {
         xPosition: playerXPosition,
-        yPosition: playerYPosition
+        yPosition: playerYPosition,
+        direction: playerDirection
       };
-      let updatedTail = tailHelper.addToTail(
-        playersTail,
-        currentPosition,
-        playerDirection
-      );
+      let updatedTail = tailHelper.addToTail(playersTail, currentPosition);
       setPlayersTail(updatedTail);
       console.log("score:");
     }
@@ -104,10 +141,21 @@ const Map: React.FC = () => {
     return position;
   }
 
-  function move(event: React.KeyboardEvent) {
+  function handleKeyPress(event: React.KeyboardEvent) {
     var key = event.keyCode;
-    var oldDirection = playerDirection;
     var direction = controller.convertKeyCodeToDirection(key);
+    setPlayerDirection(direction);
+
+    if (direction !== Direction.None) {
+      move(direction);
+    }
+  }
+
+  function move(direction: Direction) {
+    if (!playerStartedGame) {
+      setPlayerStartedGame(true);
+    }
+
     if (direction !== Direction.None) {
       let newPlayerPosition: Position = {
         xPosition: playerXPosition,
@@ -117,7 +165,6 @@ const Map: React.FC = () => {
 
       newPlayerPosition = updatePosition(newPlayerPosition);
 
-      setPlayerDirection(direction);
       setPlayerXPosition(newPlayerPosition.xPosition);
       setPlayerYPosition(newPlayerPosition.yPosition);
 
@@ -147,20 +194,10 @@ const Map: React.FC = () => {
         setPlayersTail(playersTail);
       }
     }
-
-    // if (direction !== oldDirection && oldDirection !== Direction.None) {
-    //   var point: Position = {
-    //     xPosition: playerXPosition,
-    //     yPosition: playerYPosition,
-    //     direction: oldDirection
-    //   };
-    //   playersDirectionPoints.push(point);
-    //   setPlayersDirectionPoints(playersDirectionPoints);
-    // }
   }
 
   return (
-    <div className={style.map} tabIndex={0} onKeyDown={move}>
+    <div className={style.map} tabIndex={0} onKeyDown={handleKeyPress}>
       <Player
         currentDirection={playerDirection}
         left={playerXPosition}

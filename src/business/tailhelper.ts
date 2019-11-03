@@ -12,13 +12,8 @@ class TailHelper {
     return lastPartOfTail;
   }
 
-  private whereToRenderTail(
-    tail: ITail,
-    playerPosition: Position,
-    currentDirection: Direction
-  ): Position {
+  private whereToRenderTail(tail: ITail, playerPosition: Position): Position {
     let tailLastPosition = this.getLastPositionOfTail(tail);
-    console.log(tailLastPosition);
 
     var endOfPlayer: Position = tailLastPosition
       ? tailLastPosition
@@ -29,12 +24,7 @@ class TailHelper {
       direction: endOfPlayer.direction
     };
 
-    currentDirection =
-      tailLastPosition && tailLastPosition.direction
-        ? tailLastPosition.direction
-        : currentDirection;
-
-    switch (currentDirection) {
+    switch (endOfPlayer.direction) {
       case Direction.Left:
         positionToRender.xPosition = positionToRender.xPosition + 16;
         break;
@@ -51,17 +41,11 @@ class TailHelper {
       default:
         break;
     }
-    positionToRender.direction = currentDirection;
     return positionToRender;
   }
 
-  addToTail(
-    tail: ITail,
-    playerPosition: Position,
-    currentDirection: Direction
-  ): ITail {
-    var render = this.whereToRenderTail(tail, playerPosition, currentDirection);
-    console.log(render);
+  addToTail(tail: ITail, playerPosition: Position): ITail {
+    var render = this.whereToRenderTail(tail, playerPosition);
     if (tail && tail.parts) {
       tail.parts.push(render);
     } else {
