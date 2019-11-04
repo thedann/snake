@@ -8,7 +8,11 @@ import TailHelper from "../../business/tailhelper";
 import Tail, { ITail } from "../tail/tail";
 import Position from "../../business/Position";
 
-const Map: React.FC = () => {
+interface IMap {
+  currentPoints: number;
+}
+
+const Map: React.FC<IMap> = (props: IMap) => {
   let controller = new Controller();
   let tailHelper = new TailHelper();
   let initialTail: ITail = {};

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import "./App.css";
 import Map from "./components/map/map";
+import ScoreBoard from "./components/scoreboard/scoreBoard";
 
 interface IAppState {
   GameStart: boolean;
@@ -8,6 +9,8 @@ interface IAppState {
 
 const App: React.FC = () => {
   const [gameStart, setGameStart] = useState(false);
+  const [currentPoints, setCurrentPoints] = useState(0);
+  const context = React.createContext(currentPoints);
 
   return (
     <div className="main-container">
@@ -16,8 +19,9 @@ const App: React.FC = () => {
           Start game
         </button>
       ) : (
-        <Map></Map>
+        <Map currentPoints={currentPoints}></Map>
       )}
+      <ScoreBoard points={currentPoints}></ScoreBoard>
     </div>
   );
 };
