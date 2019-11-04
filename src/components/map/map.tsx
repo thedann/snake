@@ -7,6 +7,7 @@ import Controller from "../../business/controller";
 import TailHelper from "../../business/tailhelper";
 import Tail, { ITail } from "../tail/tail";
 import Position from "../../business/Position";
+import { storeContext } from "../../context/context";
 
 interface IMap {
   currentPoints: number;
@@ -16,6 +17,12 @@ const Map: React.FC<IMap> = (props: IMap) => {
   let controller = new Controller();
   let tailHelper = new TailHelper();
   let initialTail: ITail = {};
+
+  //Store for SCORE
+  const store = React.useContext(storeContext);
+  if (!store) throw Error("Store shouldn't be null");
+
+  const { setScore, getCurrentScore } = store;
 
   //Hooks for PLAYER
   const [playerXPosition, setPlayerXPosition] = useState(80);
@@ -85,25 +92,30 @@ const Map: React.FC<IMap> = (props: IMap) => {
       playerYPosition === snackYPosition
     ) {
       //we eat the snack! yum!
-      setSnackIsVisible(false);
-      setSnackXPosition(giveRandomNumber());
-      setSnackYPosition(giveRandomNumber());
-      if (playerMoveTimer >= playerMaxSpeed) {
-        setPlayerMoveTimer(playerMoveTimer * 0.8);
-      } else {
-        console.log("reached max speed");
-      }
-
-      let currentPosition: Position = {
-        xPosition: playerXPosition,
-        yPosition: playerYPosition,
-        direction: playerDirection
-      };
-      let updatedTail = tailHelper.addToTail(playersTail, currentPosition);
-      setPlayersTail(updatedTail);
-      console.log("score:");
+      eatSnack();
     }
   }, [playerXPosition, playerYPosition]);
+
+  function eatSnack() {
+    setScore(getCurrentScore + 1);
+    setSnackIsVisible(false);
+    setSnackXPosition(giveRandomNumber());
+    setSnackYPosition(giveRandomNumber());
+    if (playerMoveTimer >= playerMaxSpeed) {
+      setPlayerMoveTimer(playerMoveTimer * 0.8);
+    } else {
+      console.log("reached max speed");
+    }
+
+    let currentPosition: Position = {
+      xPosition: playerXPosition,
+      yPosition: playerYPosition,
+      direction: playerDirection
+    };
+    let updatedTail = tailHelper.addToTail(playersTail, currentPosition);
+    setPlayersTail(updatedTail);
+    console.log("score:");
+  }
 
   function updatePosition(position: Position): Position {
     let direction = position.direction;
