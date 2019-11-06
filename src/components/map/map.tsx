@@ -167,6 +167,25 @@ const Map: React.FC<IMap> = (props: IMap) => {
     }
   }
 
+  function checkIfPlayerTouchedTheTail(
+    playerPosition: Position,
+    tail: ITail
+  ): boolean {
+    let isGameOver = false;
+    if (tail.parts) {
+      tail.parts.forEach(part => {
+        if (
+          part.yPosition === playerPosition.yPosition &&
+          part.xPosition === playerPosition.xPosition
+        ) {
+          console.log("GAME OVER!!!");
+          isGameOver = true;
+        }
+      });
+    }
+    return isGameOver;
+  }
+
   function move(direction: Direction) {
     if (!playerStartedGame) {
       setPlayerStartedGame(true);
@@ -183,6 +202,11 @@ const Map: React.FC<IMap> = (props: IMap) => {
 
       setPlayerXPosition(newPlayerPosition.xPosition);
       setPlayerYPosition(newPlayerPosition.yPosition);
+
+      let isGameOver = checkIfPlayerTouchedTheTail(
+        newPlayerPosition,
+        playersTail
+      );
 
       if (playersTail.parts) {
         let prevDirection = JSON.parse(JSON.stringify(playerDirection));

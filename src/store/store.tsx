@@ -6,7 +6,6 @@ export const createStore = () => {
     setScore(score: number) {
       store.score.set(score);
     },
-
     get getCurrentScore() {
       return store.score.get();
     }
