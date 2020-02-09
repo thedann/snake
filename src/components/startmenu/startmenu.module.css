@@ -1,0 +1,16 @@
+.startmenu {
+  height: 20rem;
+  width: 20rem;
+  background-color: #131214;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.startbutton {
+  height: 4rem;
+  width: 10rem;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  font-size: 1.5rem;
+}

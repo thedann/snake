@@ -5,6 +5,10 @@
   background-color: #131214;
 }
 
+.map:focus {
+  outline: none;
+}
+
 .dot {
   height: 1rem;
   width: 1rem;

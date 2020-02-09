@@ -7,6 +7,8 @@ import Controller from "../../business/controller";
 import TailHelper from "../../business/tailhelper";
 import Tail, { ITail } from "../tail/tail";
 import Position from "../../business/Position";
+import { storeContext } from "../../context/context";
+import GameOver from "../gameover/gameover";
 
 interface IMap {
   currentPoints: number;
@@ -17,6 +19,12 @@ const Map: React.FC<IMap> = (props: IMap) => {
   let tailHelper = new TailHelper();
   let initialTail: ITail = {};
 
+  //Store for SCORE
+  const store = React.useContext(storeContext);
+  if (!store) throw Error("Store shouldn't be null");
+
+  const { setScore, getCurrentScore } = store;
+
   //Hooks for PLAYER
   const [playerXPosition, setPlayerXPosition] = useState(80);
   const [playerYPosition, setPlayerYPosition] = useState(80);
@@ -26,6 +34,7 @@ const Map: React.FC<IMap> = (props: IMap) => {
   const [playerMaxSpeed, setPlayerMaxSpeed] = useState(70);
   const [playerIsMoving, setPlayerIsMoving] = useState(0);
   const [playerStartedGame, setPlayerStartedGame] = useState(false);
+  const [isGameOver, setIsGameOver] = useState(false);
 
   //Hooks for SNACK
   const [snackXPosition, setSnackXPosition] = useState(96);
@@ -85,32 +94,46 @@ const Map: React.FC<IMap> = (props: IMap) => {
       playerYPosition === snackYPosition
     ) {
       //we eat the snack! yum!
-      setSnackIsVisible(false);
-      setSnackXPosition(giveRandomNumber());
-      setSnackYPosition(giveRandomNumber());
-      if (playerMoveTimer >= playerMaxSpeed) {
-        setPlayerMoveTimer(playerMoveTimer * 0.8);
-      } else {
-        console.log("reached max speed");
-      }
-
-      let currentPosition: Position = {
-        xPosition: playerXPosition,
-        yPosition: playerYPosition,
-        direction: playerDirection
-      };
-      let updatedTail = tailHelper.addToTail(playersTail, currentPosition);
-      setPlayersTail(updatedTail);
-      console.log("score:");
+      eatSnack();
     }
   }, [playerXPosition, playerYPosition]);
+
+  React.useEffect(() => {
+    if (isGameOver) {
+      setPlayerIsMoving(0);
+      setPlayerDirection(Direction.None);
+      setPlayerXPosition(80);
+      setPlayerYPosition(80);
+      setPlayersTail(initialTail);
+    }
+  }, [isGameOver]);
+
+  function eatSnack() {
+    setScore(getCurrentScore + 1);
+    setSnackIsVisible(false);
+    setSnackXPosition(giveRandomNumber());
+    setSnackYPosition(giveRandomNumber());
+    if (playerMoveTimer >= playerMaxSpeed) {
+      setPlayerMoveTimer(playerMoveTimer * 0.8);
+    } else {
+      console.log("reached max speed");
+    }
+
+    let currentPosition: Position = {
+      xPosition: playerXPosition,
+      yPosition: playerYPosition,
+      direction: playerDirection
+    };
+    let updatedTail = tailHelper.addToTail(playersTail, currentPosition);
+    setPlayersTail(updatedTail);
+    console.log("score:");
+  }
 
   function updatePosition(position: Position): Position {
     let direction = position.direction;
     switch (direction) {
       case Direction.Left:
         if (position.xPosition - 16 > -16) {
-          //setPlayerXPosition(playerXPosition - 16);
           position.xPosition = position.xPosition - 16;
         }
 
@@ -118,14 +141,12 @@ const Map: React.FC<IMap> = (props: IMap) => {
       case Direction.Up:
         //up
         if (position.yPosition - 16 > -16) {
-          // setPlayerYPosition(playerYPosition - 16);
           position.yPosition = position.yPosition - 16;
         }
         break;
       case Direction.Right:
         //right
         if (position.xPosition + 16 < 20 * 16) {
-          // setPlayerXPosition(playerXPosition + 16);
           position.xPosition = position.xPosition + 16;
         }
 
@@ -134,8 +155,6 @@ const Map: React.FC<IMap> = (props: IMap) => {
         //down
         if (position.yPosition + 16 < 20 * 16) {
           position.yPosition = position.yPosition + 16;
-
-          // setPlayerYPosition(playerYPosition + 16);
         }
         break;
 
@@ -148,18 +167,38 @@ const Map: React.FC<IMap> = (props: IMap) => {
   function handleKeyPress(event: React.KeyboardEvent) {
     var key = event.keyCode;
     var direction = controller.convertKeyCodeToDirection(key);
-    setPlayerDirection(direction);
-
-    if (direction !== Direction.None) {
-      move(direction);
+    //check if player just entered the same direction again....
+    if (direction !== playerDirection) {
+      setPlayerDirection(direction);
+      if (direction !== Direction.None) {
+        move(direction);
+      }
     }
+  }
+
+  function checkIfPlayerTouchedTheTail(
+    playerPosition: Position,
+    tail: ITail
+  ): boolean {
+    let isGameOver = false;
+    if (tail.parts) {
+      tail.parts.forEach(part => {
+        if (
+          part.yPosition === playerPosition.yPosition &&
+          part.xPosition === playerPosition.xPosition
+        ) {
+          console.log("GAME OVER!!!");
+          isGameOver = true;
+        }
+      });
+    }
+    return isGameOver;
   }
 
   function move(direction: Direction) {
     if (!playerStartedGame) {
       setPlayerStartedGame(true);
     }
-
     if (direction !== Direction.None) {
       let newPlayerPosition: Position = {
         xPosition: playerXPosition,
@@ -172,44 +211,60 @@ const Map: React.FC<IMap> = (props: IMap) => {
       setPlayerXPosition(newPlayerPosition.xPosition);
       setPlayerYPosition(newPlayerPosition.yPosition);
 
-      if (playersTail.parts) {
-        let prevDirection = JSON.parse(JSON.stringify(playerDirection));
-        playersTail.parts.forEach(
-          (tailPartPosition: Position, index: number) => {
-            let oldTailPartDirection = JSON.parse(
-              JSON.stringify(tailPartPosition.direction)
-            );
+      let isGameOver = checkIfPlayerTouchedTheTail(
+        newPlayerPosition,
+        playersTail
+      );
+      if (!isGameOver) {
+        if (playersTail.parts) {
+          let prevDirection = JSON.parse(JSON.stringify(playerDirection));
+          playersTail.parts.forEach(
+            (tailPartPosition: Position, index: number) => {
+              let oldTailPartDirection = JSON.parse(
+                JSON.stringify(tailPartPosition.direction)
+              );
 
-            tailPartPosition.direction = prevDirection;
+              tailPartPosition.direction = prevDirection;
 
-            let tempPos: Position = {
-              xPosition: tailPartPosition.xPosition,
-              yPosition: tailPartPosition.yPosition,
-              direction: tailPartPosition.direction
-            };
+              let tempPos: Position = {
+                xPosition: tailPartPosition.xPosition,
+                yPosition: tailPartPosition.yPosition,
+                direction: tailPartPosition.direction
+              };
 
-            prevDirection = oldTailPartDirection;
-            tempPos = updatePosition(tempPos);
-            tailPartPosition.xPosition = tempPos.xPosition;
-            tailPartPosition.yPosition = tempPos.yPosition;
-          }
-        );
+              prevDirection = oldTailPartDirection;
+              tempPos = updatePosition(tempPos);
+              tailPartPosition.xPosition = tempPos.xPosition;
+              tailPartPosition.yPosition = tempPos.yPosition;
+            }
+          );
 
-        setPlayersTail(playersTail);
+          setPlayersTail(playersTail);
+        }
+      } else {
+        setIsGameOver(true);
       }
     }
   }
 
   return (
     <div className={style.map} tabIndex={0} onKeyDown={handleKeyPress}>
-      <Player
-        currentDirection={playerDirection}
-        left={playerXPosition}
-        top={playerYPosition}
-      ></Player>
-      {playersTail.parts && <Tail parts={playersTail.parts}></Tail>}
-      {snackIsVisible && (
-        <Snack left={snackXPosition} top={snackYPosition}></Snack>
+      {!isGameOver ? (
+        <>
+          <Player
+            currentDirection={playerDirection}
+            left={playerXPosition}
+            top={playerYPosition}
+          ></Player>
+          {playersTail.parts && <Tail parts={playersTail.parts}></Tail>}
+          {snackIsVisible && (
+            <Snack left={snackXPosition} top={snackYPosition}></Snack>
+          )}
+        </>
+      ) : (
+        <>
+          <GameOver points={getCurrentScore}></GameOver>
+        </>
       )}
     </div>
   );
