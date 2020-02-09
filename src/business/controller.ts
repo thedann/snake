@@ -21,6 +21,34 @@ class Controller {
     }
     return direction;
   };
+
+  checkIfDirectionIsValid = function(
+    currentDirection: Direction,
+    newDirection: Direction
+  ) {
+    if (
+      currentDirection === Direction.Left &&
+      newDirection === Direction.Right
+    ) {
+      return false;
+    } else if (
+      currentDirection === Direction.Right &&
+      newDirection === Direction.Left
+    ) {
+      return false;
+    } else if (
+      currentDirection === Direction.Up &&
+      newDirection === Direction.Down
+    ) {
+      return false;
+    } else if (
+      currentDirection === Direction.Down &&
+      newDirection === Direction.Up
+    ) {
+      return false;
+    }
+    return true;
+  };
 }
 
 export default Controller;

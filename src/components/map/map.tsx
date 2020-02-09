@@ -10,11 +10,7 @@ import Position from "../../business/Position";
 import GameOver from "../gameover/gameover";
 import { useScore } from "../../context";
 
-interface IMap {
-  currentPoints: number;
-}
-
-const Map: React.FC<IMap> = () => {
+const Map: React.FC = () => {
   let controller = new Controller();
   let tailHelper = new TailHelper();
   let initialTail: ITail = {};
@@ -167,7 +163,11 @@ const Map: React.FC<IMap> = () => {
     var key = event.keyCode;
     var direction = controller.convertKeyCodeToDirection(key);
     //check if player just entered the same direction again....
-    if (direction !== playerDirection) {
+    //or the opposite one!
+    if (
+      direction !== playerDirection &&
+      controller.checkIfDirectionIsValid(playerDirection, direction)
+    ) {
       setPlayerDirection(direction);
       if (direction !== Direction.None) {
         move(direction);

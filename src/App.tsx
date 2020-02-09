@@ -11,8 +11,6 @@ interface IAppState {
 
 const App: React.FC = () => {
   const [gameStart, setGameStart] = useState(false);
-  const [currentPoints, setCurrentPoints] = useState(0);
-  const context = React.createContext(currentPoints);
 
   return (
     <ScoreProvider>
@@ -21,7 +19,7 @@ const App: React.FC = () => {
           <StartMenu startGameCallback={setGameStart}></StartMenu>
         ) : (
           <>
-            <Map currentPoints={currentPoints}></Map>
+            <Map></Map>
             <ScoreBoard></ScoreBoard>
           </>
         )}
