@@ -1,8 +1,20 @@
 .scoreboard {
   display: flex;
-  background-color: aquamarine;
+  background-color: #131214;
+  border-left: 1px solid white;
+  color: #e3a807;
   min-height: 20rem;
   min-width: 10rem;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+}
+
+.header {
+  height: 2rem;
+}
+
+.counter {
+  font-size: 2rem;
+  height: 60%;
 }

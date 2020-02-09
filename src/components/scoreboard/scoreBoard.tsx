@@ -10,7 +10,10 @@ interface IScoreBoard {
 export const ScoreBoard: React.FC<IScoreBoard> = ({ points }) => {
   return (
     <div className={style.scoreboard}>
-      <span>{points}</span>
+      <div className={style.header}>React Snake Game</div>
+      <div className={style.counter}>
+        <span> {points}</span>
+      </div>
     </div>
   );
 };

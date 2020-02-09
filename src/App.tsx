@@ -3,6 +3,7 @@ import "./App.css";
 import Map from "./components/map/map";
 import ScoreBoard, { ScoreView } from "./components/scoreboard/scoreBoard";
 import StoreProvider from "./context/context";
+import StartMenu from "./components/startmenu/startmenu";
 
 interface IAppState {
   GameStart: boolean;
@@ -17,13 +18,13 @@ const App: React.FC = () => {
     <StoreProvider>
       <div className="main-container">
         {!gameStart ? (
-          <button onClick={() => setGameStart(true)} type="button">
-            Start game
-          </button>
+          <StartMenu startGameCallback={setGameStart}></StartMenu>
         ) : (
-          <Map currentPoints={currentPoints}></Map>
+          <>
+            <Map currentPoints={currentPoints}></Map>
+            <ScoreView></ScoreView>
+          </>
         )}
-        <ScoreView></ScoreView>
       </div>
     </StoreProvider>
   );
