@@ -1,31 +1,28 @@
-import React, { useState } from "react";
+import React from "react";
 import style from "./scoreBoard.module.css";
-import { useObserver } from "mobx-react-lite";
-import { storeContext } from "../../context/context";
+import { useScore } from "../../context";
 
-interface IScoreBoard {
-  points: number;
-}
+const ScoreBoard: React.FC = () => {
+  const { score } = useScore();
 
-export const ScoreBoard: React.FC<IScoreBoard> = ({ points }) => {
   return (
     <div className={style.scoreboard}>
       <div className={style.header}>React Snake Game</div>
       <div className={style.counter}>
-        <span> {points}</span>
+        <span> {score}</span>
       </div>
     </div>
   );
 };
 
-export const ScoreView = () => {
-  const store = React.useContext(storeContext);
-  if (!store) throw Error("Store shouldn't be null");
-  return useObserver(() => {
-    return <ScoreBoard points={store.getCurrentScore} />;
-  });
-};
+export default ScoreBoard;
 
-export default ScoreView;
+// export const ScoreView = () => {
+//   const store = React.useContext(storeContext);
+//   if (!store) throw Error("Store shouldn't be null");
+//   return useObserver(() => {
+//     return <ScoreBoard points={store.getCurrentScore} />;
+//   });
+// };
 
 //export default ScoreBoard;

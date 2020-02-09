@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import style from "./map.module.css";
 import Player from "../player/player";
 import Snack from "../snack/snack";
@@ -7,23 +7,22 @@ import Controller from "../../business/controller";
 import TailHelper from "../../business/tailhelper";
 import Tail, { ITail } from "../tail/tail";
 import Position from "../../business/Position";
-import { storeContext } from "../../context/context";
 import GameOver from "../gameover/gameover";
+import { useScore } from "../../context";
 
 interface IMap {
   currentPoints: number;
 }
 
-const Map: React.FC<IMap> = (props: IMap) => {
+const Map: React.FC<IMap> = () => {
   let controller = new Controller();
   let tailHelper = new TailHelper();
   let initialTail: ITail = {};
 
   //Store for SCORE
-  const store = React.useContext(storeContext);
-  if (!store) throw Error("Store shouldn't be null");
+  // const store = React.useContext(scoreContext);
 
-  const { setScore, getCurrentScore } = store;
+  const { score, setScore } = useScore();
 
   //Hooks for PLAYER
   const [playerXPosition, setPlayerXPosition] = useState(80);
@@ -31,7 +30,7 @@ const Map: React.FC<IMap> = (props: IMap) => {
   const [playerDirection, setPlayerDirection] = useState(Direction.None);
   const [playersTail, setPlayersTail] = useState(initialTail);
   const [playerMoveTimer, setPlayerMoveTimer] = useState(320);
-  const [playerMaxSpeed, setPlayerMaxSpeed] = useState(70);
+  const [playerMaxSpeed] = useState(70);
   const [playerIsMoving, setPlayerIsMoving] = useState(0);
   const [playerStartedGame, setPlayerStartedGame] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
@@ -109,7 +108,7 @@ const Map: React.FC<IMap> = (props: IMap) => {
   }, [isGameOver]);
 
   function eatSnack() {
-    setScore(getCurrentScore + 1);
+    setScore(score + 1);
     setSnackIsVisible(false);
     setSnackXPosition(giveRandomNumber());
     setSnackYPosition(giveRandomNumber());
@@ -218,26 +217,24 @@ const Map: React.FC<IMap> = (props: IMap) => {
       if (!isGameOver) {
         if (playersTail.parts) {
           let prevDirection = JSON.parse(JSON.stringify(playerDirection));
-          playersTail.parts.forEach(
-            (tailPartPosition: Position, index: number) => {
-              let oldTailPartDirection = JSON.parse(
-                JSON.stringify(tailPartPosition.direction)
-              );
+          playersTail.parts.forEach((tailPartPosition: Position) => {
+            let oldTailPartDirection = JSON.parse(
+              JSON.stringify(tailPartPosition.direction)
+            );
 
-              tailPartPosition.direction = prevDirection;
+            tailPartPosition.direction = prevDirection;
 
-              let tempPos: Position = {
-                xPosition: tailPartPosition.xPosition,
-                yPosition: tailPartPosition.yPosition,
-                direction: tailPartPosition.direction
-              };
+            let tempPos: Position = {
+              xPosition: tailPartPosition.xPosition,
+              yPosition: tailPartPosition.yPosition,
+              direction: tailPartPosition.direction
+            };
 
-              prevDirection = oldTailPartDirection;
-              tempPos = updatePosition(tempPos);
-              tailPartPosition.xPosition = tempPos.xPosition;
-              tailPartPosition.yPosition = tempPos.yPosition;
-            }
-          );
+            prevDirection = oldTailPartDirection;
+            tempPos = updatePosition(tempPos);
+            tailPartPosition.xPosition = tempPos.xPosition;
+            tailPartPosition.yPosition = tempPos.yPosition;
+          });
 
           setPlayersTail(playersTail);
         }
@@ -263,7 +260,7 @@ const Map: React.FC<IMap> = (props: IMap) => {
         </>
       ) : (
         <>
-          <GameOver points={getCurrentScore}></GameOver>
+          <GameOver points={score}></GameOver>
         </>
       )}
     </div>

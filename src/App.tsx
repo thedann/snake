@@ -1,9 +1,9 @@
 import React, { useState, useContext } from "react";
 import "./App.css";
 import Map from "./components/map/map";
-import ScoreBoard, { ScoreView } from "./components/scoreboard/scoreBoard";
-import StoreProvider from "./context/context";
+import ScoreBoard from "./components/scoreboard/scoreBoard";
 import StartMenu from "./components/startmenu/startmenu";
+import { ScoreProvider } from "./context";
 
 interface IAppState {
   GameStart: boolean;
@@ -15,18 +15,18 @@ const App: React.FC = () => {
   const context = React.createContext(currentPoints);
 
   return (
-    <StoreProvider>
+    <ScoreProvider>
       <div className="main-container">
         {!gameStart ? (
           <StartMenu startGameCallback={setGameStart}></StartMenu>
         ) : (
           <>
             <Map currentPoints={currentPoints}></Map>
-            <ScoreView></ScoreView>
+            <ScoreBoard></ScoreBoard>
           </>
         )}
       </div>
-    </StoreProvider>
+    </ScoreProvider>
   );
 };
 
