@@ -111,7 +111,7 @@ const Map: React.FC = () => {
     if (playerMoveTimer >= playerMaxSpeed) {
       setPlayerMoveTimer(playerMoveTimer * 0.8);
     } else {
-      console.log("reached max speed");
+
     }
 
     let currentPosition: Position = {
@@ -185,7 +185,6 @@ const Map: React.FC = () => {
           part.yPosition === playerPosition.yPosition &&
           part.xPosition === playerPosition.xPosition
         ) {
-          console.log("GAME OVER!!!");
           isGameOver = true;
         }
       });
@@ -205,7 +204,6 @@ const Map: React.FC = () => {
       };
 
       newPlayerPosition = updatePosition(newPlayerPosition);
-      console.log(newPlayerPosition);
 
       if(direction === Direction.Down || direction === Direction.Up) {
         setPlayerYPosition(newPlayerPosition.yPosition);
