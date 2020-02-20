@@ -4,6 +4,7 @@ import Map from "./components/map/map";
 import ScoreBoard from "./components/scoreboard/scoreBoard";
 import StartMenu from "./components/startmenu/startmenu";
 import { ScoreProvider } from "./context";
+import fire from "./fire";
 
 interface IAppState {
   GameStart: boolean;
@@ -11,6 +12,7 @@ interface IAppState {
 
 const App: React.FC = () => {
   const [gameStart, setGameStart] = useState(false);
+
 
   return (
     <ScoreProvider>

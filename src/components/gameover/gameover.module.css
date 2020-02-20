@@ -1,3 +1,35 @@
 .gameover {
   color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.textinput {
+  width: 8rem;
+  background: transparent;
+  border: none;
+  color: white;
+  border-bottom: 1px solid white;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 1rem 0;
+  font-size: 2rem;
+}
+
+.textinput::placeholder{
+  font-size: 1rem;
+}
+
+.textinput:focus {
+  outline: none;
+}
+
+.submitbutton {
+  height: 2rem;
+  width: 10rem;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  font-size: 1rem;
+  margin-top:1rem;
 }

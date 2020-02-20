@@ -6,8 +6,9 @@
   min-height: 20rem;
   min-width: 10rem;
   align-items: center;
-  justify-content: center;
   flex-direction: column;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .header {
@@ -16,5 +17,4 @@
 
 .counter {
   font-size: 2rem;
-  height: 60%;
 }
