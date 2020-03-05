@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import style from "./gameover.module.css";
 import fire from "../../fire";
+import { useScore } from "../../context";
 
 interface IGameOver {
   points: number;
@@ -8,21 +9,23 @@ interface IGameOver {
 
 const GameOver: React.FC<IGameOver> = (props: IGameOver) => {
   const [nickname, setNickname] = useState('');
+  const { score } = useScore();
+
 
   let timestamp = Date.now();
 
   const pointsText = () => {
-    if (props.points === 1) {
-      return "You got " + props.points + " point";
+    if (score === 1) {
+      return "You got " + score + " point";
     } else {
-      return "You got " + props.points + " points";
+      return "You got " + score + " points";
     }
   };
 
   function sendPoints () {
     fire.database().ref('highscore/' + timestamp).set({
-      score: props.points,
-      nickname: nickname
+      score: score,
+      nickname: nickname.toUpperCase()
     },() => {
       window.location.reload();
     }

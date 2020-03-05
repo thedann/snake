@@ -1,27 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import style from "./scoreBoard.module.css";
 import { useScore } from "../../context";
 import Counter from "../counter/counter";
-import fire from "../../fire";
-import { render } from "react-dom";
 
-const ScoreBoard: React.FC = () => {
+interface IScoreBoard {
+  scoreList?: string[];
+}
+
+const ScoreBoard: React.FC<IScoreBoard> = (props: IScoreBoard) => {
   const { score } = useScore();
-  const [scoreList, setScoreList] = useState(['']);
 
+  function getEmoji(index:number) {
+    var emoji = "";
+    switch (index) {
+      case 0:
+        emoji = "👑"
+        break;
+      case 1:
+        emoji = "🥈"
+       break;
+       case 2:
+         emoji = "🥉"
+         break;
 
-  function renderHighscore () {
-    var list:any[] = [];
-    var ref = fire.database().ref("highscore/");
-    ref.orderByChild("score").limitToLast(3).on("child_added", (snapshot) => {
-      console.log(snapshot.val());
-      list.unshift(snapshot.val());
-    });
-    setScoreList(list);
+      default:
+        break;
+    }
+    return emoji;
   }
-  if(setScoreList.length < 3) {
-    renderHighscore();
-  }
+
 
   return (
     <div className={style.scoreboard}>
@@ -30,13 +37,18 @@ const ScoreBoard: React.FC = () => {
         <Counter number={score}></Counter>
       </div>
       <div>
-      <ul>
-        {scoreList.map((item:any) => {
-        return (
-          <li>{item.nickname} : {item.score}</li>
-        )
-        })}
-    </ul>
+        <ul>
+          {props && props.scoreList && props.scoreList.map((item: any, index: number) => {
+            return (
+              
+              <li key={index}>
+                { getEmoji(index) }
+                
+                 {item.nickname} : {item.score}
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </div>
   );
