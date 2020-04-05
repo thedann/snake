@@ -87,10 +87,10 @@ const Map: React.FC = () => {
     if (
       playerXPosition === snackXPosition &&
       playerYPosition === snackYPosition
-    ) {
-      //we eat the snack! yum!
-      eatSnack();
-    }
+      ) {
+        //we eat the snack! yum!
+        eatSnack();
+      }
   }, [playerXPosition, playerYPosition]);
 
   React.useEffect(() => {
@@ -111,7 +111,7 @@ const Map: React.FC = () => {
     if (playerMoveTimer >= playerMaxSpeed) {
       setPlayerMoveTimer(playerMoveTimer * 0.8);
     } else {
-      console.log("reached max speed");
+
     }
 
     let currentPosition: Position = {
@@ -121,7 +121,6 @@ const Map: React.FC = () => {
     };
     let updatedTail = tailHelper.addToTail(playersTail, currentPosition);
     setPlayersTail(updatedTail);
-    console.log("score:");
   }
 
   function updatePosition(position: Position): Position {
@@ -186,7 +185,6 @@ const Map: React.FC = () => {
           part.yPosition === playerPosition.yPosition &&
           part.xPosition === playerPosition.xPosition
         ) {
-          console.log("GAME OVER!!!");
           isGameOver = true;
         }
       });
@@ -207,8 +205,11 @@ const Map: React.FC = () => {
 
       newPlayerPosition = updatePosition(newPlayerPosition);
 
-      setPlayerXPosition(newPlayerPosition.xPosition);
-      setPlayerYPosition(newPlayerPosition.yPosition);
+      if(direction === Direction.Down || direction === Direction.Up) {
+        setPlayerYPosition(newPlayerPosition.yPosition);
+      } else {
+        setPlayerXPosition(newPlayerPosition.xPosition);
+      }
 
       let isGameOver = checkIfPlayerTouchedTheTail(
         newPlayerPosition,
@@ -216,32 +217,35 @@ const Map: React.FC = () => {
       );
       if (!isGameOver) {
         if (playersTail.parts) {
-          let prevDirection = JSON.parse(JSON.stringify(playerDirection));
-          playersTail.parts.forEach((tailPartPosition: Position) => {
-            let oldTailPartDirection = JSON.parse(
-              JSON.stringify(tailPartPosition.direction)
-            );
-
-            tailPartPosition.direction = prevDirection;
-
-            let tempPos: Position = {
-              xPosition: tailPartPosition.xPosition,
-              yPosition: tailPartPosition.yPosition,
-              direction: tailPartPosition.direction
-            };
-
-            prevDirection = oldTailPartDirection;
-            tempPos = updatePosition(tempPos);
-            tailPartPosition.xPosition = tempPos.xPosition;
-            tailPartPosition.yPosition = tempPos.yPosition;
-          });
-
-          setPlayersTail(playersTail);
+          moveTail(playersTail);
         }
       } else {
         setIsGameOver(true);
       }
     }
+  }
+
+  function moveTail(playersTail: ITail) {
+    if(playersTail != null && playersTail.parts) {
+      let prevDirection = playerDirection;
+      playersTail.parts.forEach((tailPartPosition: Position) => {
+        let oldTailPartDirection = tailPartPosition.direction;
+          tailPartPosition.direction = prevDirection;
+          
+          let tempPos: Position = {
+            xPosition: tailPartPosition.xPosition,
+            yPosition: tailPartPosition.yPosition,
+            direction: tailPartPosition.direction
+          };
+          
+          prevDirection = oldTailPartDirection!;
+          tempPos = updatePosition(tempPos);
+          tailPartPosition.xPosition = tempPos.xPosition;
+          tailPartPosition.yPosition = tempPos.yPosition;
+        });
+        
+        setPlayersTail(playersTail);
+      }
   }
 
   return (
