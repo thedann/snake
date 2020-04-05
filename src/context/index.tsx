@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 
 /*
   TODO: add playerState to the context. 
@@ -8,18 +8,24 @@ import React, { useState, useContext } from "react";
 type Data = {
   score: number;
   setScore: (score: number) => void;
+  scoreList: string[];
+  setScoreList: (scoreList: string[]) => void;
 };
 
 const ScoreContext = React.createContext<Data>({
   score: 0,
-  setScore: () => {}
+  setScore: () => {},
+  scoreList: [''],
+  setScoreList: () => {},
 });
 
 const ScoreProvider: React.FC = ({ children }) => {
   const [score, setScore] = useState<number>(0);
+  const [scoreList, setScoreList] = useState<string[]>([]);
+  
 
   return (
-    <ScoreContext.Provider value={{ score, setScore }}>
+    <ScoreContext.Provider value={{ score, setScore, scoreList, setScoreList}}>
       {children}
     </ScoreContext.Provider>
   );

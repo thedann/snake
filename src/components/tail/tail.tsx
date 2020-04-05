@@ -13,7 +13,7 @@ const Tail: React.FC<ITail> = (props: ITail) => {
       {props.parts &&
         props.parts.map((part: Position, index: number) => {
           return (
-            <div
+            <div key={index}
               style={{ left: part.xPosition, top: part.yPosition }}
               className={style.tail}
             ></div>

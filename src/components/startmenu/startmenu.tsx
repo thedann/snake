@@ -6,11 +6,12 @@ interface IStartMenu {
 }
 
 const StartMenu: React.FC<IStartMenu> = (props: IStartMenu) => {
+
   return (
     <div className={style.startmenu}>
       <button
         className={style.startbutton}
-        onClick={() => props.startGameCallback(true)}
+        onClick={() => props.startGameCallback(true) }
         type="button"
       >
         Start game

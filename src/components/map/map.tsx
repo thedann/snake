@@ -9,6 +9,7 @@ import Tail, { ITail } from "../tail/tail";
 import Position from "../../business/Position";
 import GameOver from "../gameover/gameover";
 import { useScore } from "../../context";
+import fire from "../../fire";
 
 const Map: React.FC = () => {
   let controller = new Controller();
@@ -100,6 +101,7 @@ const Map: React.FC = () => {
       setPlayerXPosition(80);
       setPlayerYPosition(80);
       setPlayersTail(initialTail);
+
     }
   }, [isGameOver]);
 
