@@ -270,12 +270,26 @@ const Map: React.FC = () => {
 
   return (
     <div id="map" className={style.map} tabIndex={0} onKeyDown={handleKeyPress}>
-      <div className={style.mobileControllers}>
-        <div onClick={() => moveWithButtons(Direction.Left)} className={style.left}></div>
-        <div onClick={() => moveWithButtons(Direction.Up)} className={style.top}></div>
-        <div onClick={() => moveWithButtons(Direction.Right)} className={style.right}></div>
-        <div onClick={() => moveWithButtons(Direction.Down)} className={style.bottom}></div>
-      </div>
+      {!isGameOver && (
+        <div className={style.mobileControllers}>
+          <div
+            onClick={() => moveWithButtons(Direction.Left)}
+            className={style.left}
+          ></div>
+          <div
+            onClick={() => moveWithButtons(Direction.Up)}
+            className={style.top}
+          ></div>
+          <div
+            onClick={() => moveWithButtons(Direction.Right)}
+            className={style.right}
+          ></div>
+          <div
+            onClick={() => moveWithButtons(Direction.Down)}
+            className={style.bottom}
+          ></div>
+        </div>
+      )}
       {!isGameOver ? (
         <>
           <Player
