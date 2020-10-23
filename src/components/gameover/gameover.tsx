@@ -32,6 +32,10 @@ const GameOver: React.FC<IGameOver> = (props: IGameOver) => {
     );
   }
 
+  function reloadGame() {
+    window.location.reload();
+  }
+
   return (
     <div className={style.gameover}>
       <h1>Game over!</h1>
@@ -44,6 +48,9 @@ const GameOver: React.FC<IGameOver> = (props: IGameOver) => {
         
         </input>
       <button className={style.submitbutton} onClick={() => sendPoints()} >Submit your score</button>
+
+      <button className={style.submitbutton} onClick={() => reloadGame()} >Reload game</button>
+
     </div>
   );
 };

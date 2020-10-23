@@ -16,3 +16,54 @@
   background-color: #528710;
   position: absolute;
 }
+
+.mobileControllers {
+  position: relative;
+  display: none;
+
+}
+
+.left, .top, .right, .bottom {
+  height: 4rem;
+  width: 4rem;
+  border: 1px solid white;
+  position: absolute;
+  border-radius: 10px;
+  opacity: .2;
+}
+
+.left {
+  top: 5rem;
+  left: 1rem;
+  height: 9rem;
+
+}
+
+.top {
+  top: 1rem;
+  right: 6rem;
+  width: 8rem;
+
+}
+
+.right {
+  top: 5rem;
+  right: 1rem;
+  height: 9rem;
+
+}
+
+.bottom {
+  top: 14rem;
+  right: 6rem;
+  width: 8rem;
+
+}
+
+@media only screen and (max-width: 600px) {
+  .mobileControllers {
+    position: relative;
+    display: block;
+  
+  }
+}

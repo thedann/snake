@@ -43,6 +43,14 @@ const Map: React.FC = () => {
     return number;
   }
 
+  useEffect(() => {
+    // code to run after render goes here
+    const mapElement = document.getElementById("map");
+    if (mapElement) {
+      mapElement.focus();
+    }
+  }, []);
+
   //Custom interval Hook
   //from here: https://overreacted.io/making-setinterval-declarative-with-react-hooks/
   function useInterval(callback: any, delay: number) {
@@ -88,10 +96,10 @@ const Map: React.FC = () => {
     if (
       playerXPosition === snackXPosition &&
       playerYPosition === snackYPosition
-      ) {
-        //we eat the snack! yum!
-        eatSnack();
-      }
+    ) {
+      //we eat the snack! yum!
+      eatSnack();
+    }
   }, [playerXPosition, playerYPosition]);
 
   React.useEffect(() => {
@@ -101,7 +109,6 @@ const Map: React.FC = () => {
       setPlayerXPosition(80);
       setPlayerYPosition(80);
       setPlayersTail(initialTail);
-
     }
   }, [isGameOver]);
 
@@ -113,7 +120,6 @@ const Map: React.FC = () => {
     if (playerMoveTimer >= playerMaxSpeed) {
       setPlayerMoveTimer(playerMoveTimer * 0.8);
     } else {
-
     }
 
     let currentPosition: Position = {
@@ -194,6 +200,18 @@ const Map: React.FC = () => {
     return isGameOver;
   }
 
+  function moveWithButtons(direction: Direction) {
+    if (
+      direction !== playerDirection &&
+      controller.checkIfDirectionIsValid(playerDirection, direction)
+    ) {
+      setPlayerDirection(direction);
+      if (direction !== Direction.None) {
+        move(direction);
+      }
+    }
+  }
+
   function move(direction: Direction) {
     if (!playerStartedGame) {
       setPlayerStartedGame(true);
@@ -207,7 +225,7 @@ const Map: React.FC = () => {
 
       newPlayerPosition = updatePosition(newPlayerPosition);
 
-      if(direction === Direction.Down || direction === Direction.Up) {
+      if (direction === Direction.Down || direction === Direction.Up) {
         setPlayerYPosition(newPlayerPosition.yPosition);
       } else {
         setPlayerXPosition(newPlayerPosition.xPosition);
@@ -228,30 +246,36 @@ const Map: React.FC = () => {
   }
 
   function moveTail(playersTail: ITail) {
-    if(playersTail != null && playersTail.parts) {
+    if (playersTail != null && playersTail.parts) {
       let prevDirection = playerDirection;
       playersTail.parts.forEach((tailPartPosition: Position) => {
         let oldTailPartDirection = tailPartPosition.direction;
-          tailPartPosition.direction = prevDirection;
-          
-          let tempPos: Position = {
-            xPosition: tailPartPosition.xPosition,
-            yPosition: tailPartPosition.yPosition,
-            direction: tailPartPosition.direction
-          };
-          
-          prevDirection = oldTailPartDirection!;
-          tempPos = updatePosition(tempPos);
-          tailPartPosition.xPosition = tempPos.xPosition;
-          tailPartPosition.yPosition = tempPos.yPosition;
-        });
-        
-        setPlayersTail(playersTail);
-      }
+        tailPartPosition.direction = prevDirection;
+
+        let tempPos: Position = {
+          xPosition: tailPartPosition.xPosition,
+          yPosition: tailPartPosition.yPosition,
+          direction: tailPartPosition.direction
+        };
+
+        prevDirection = oldTailPartDirection!;
+        tempPos = updatePosition(tempPos);
+        tailPartPosition.xPosition = tempPos.xPosition;
+        tailPartPosition.yPosition = tempPos.yPosition;
+      });
+
+      setPlayersTail(playersTail);
+    }
   }
 
   return (
-    <div className={style.map} tabIndex={0} onKeyDown={handleKeyPress}>
+    <div id="map" className={style.map} tabIndex={0} onKeyDown={handleKeyPress}>
+      <div className={style.mobileControllers}>
+        <div onClick={() => moveWithButtons(Direction.Left)} className={style.left}></div>
+        <div onClick={() => moveWithButtons(Direction.Up)} className={style.top}></div>
+        <div onClick={() => moveWithButtons(Direction.Right)} className={style.right}></div>
+        <div onClick={() => moveWithButtons(Direction.Down)} className={style.bottom}></div>
+      </div>
       {!isGameOver ? (
         <>
           <Player
