@@ -1,0 +1,61 @@
+.controller {
+  display: none;
+  background-color: #131214;
+  border-left: 1px solid white;
+  color: #e3a807;
+  align-items: center;
+  flex-direction: column;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.left,
+.top,
+.right,
+.bottom {
+  border: 1px solid white;
+  position: absolute;
+  border-radius: 10px;
+  opacity: 0.2;
+}
+
+.left {
+  top: 16%;
+  left: 3%;
+  height: 12rem;
+  width: 4rem;
+}
+
+.top {
+  top: 1%;
+  right: 22%;
+  width: 13rem;
+  height: 4rem;
+}
+
+.right {
+  top: 16%;
+  right: 3%;
+  height: 12rem;
+  width: 4rem;
+}
+
+.bottom {
+  bottom: 3%;
+  right: 22%;
+  width: 13rem;
+  height: 4rem;
+}
+
+@media only screen and (max-width: 600px) {
+
+  .controller {
+    border-left: 0;
+    border-top: 1px solid white;
+    padding-top: 0.5rem;
+    min-width: 20rem;
+    min-height: 18rem;
+    display: flex;
+    position: relative;
+  }
+}

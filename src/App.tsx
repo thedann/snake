@@ -5,6 +5,7 @@ import ScoreBoard from "./components/scoreboard/scoreBoard";
 import StartMenu from "./components/startmenu/startmenu";
 import { ScoreProvider, useScore } from "./context";
 import fire from "./fire";
+import Controller from "./components/controller/controller";
 
 const App: React.FC = () => {
   const [gameStart, setGameStart] = useState(false);
@@ -41,8 +42,9 @@ const App: React.FC = () => {
         ) : (
           <>
             <Map></Map>
+            <Controller></Controller>
             {
-              renderScoreBoard && 
+              renderScoreBoard &&
               <ScoreBoard scoreList={scoreList}></ScoreBoard>
             }
 
